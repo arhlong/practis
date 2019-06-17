@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <string.h>
 #include "TextQuery.h"
 
 using namespace std;
@@ -7,7 +8,7 @@ using namespace std;
 TextQuery::TextQuery(const char* path,const char* word)
 	:path_(path),
 	word_(word),
-	count_(0);
+	count_(0)
 {
 }
 
@@ -32,12 +33,22 @@ void TextQuery::query()
 	int lineNO = 1;
 	while(getline(inf,line))
 	{
-		auto pos = line.find(word_);
-		if(pos != string::npos)
+		string::size_type pos = 0;
+		bool finded = false;
+		do
 		{
-			mapLine_[lineNO] = line;
-			++count_;
-		}
+			pos = line.find(word_,pos);
+			if(pos != string::npos)
+			{
+				if(!finded)
+				{
+					finded = true;
+					mapLine_[lineNO] = line;
+				}
+				++count_;
+				pos += strlen(word_);
+			}
+		}while(pos != string::npos && pos <= line.size());
 
 		++lineNO;
 	}
