@@ -8,7 +8,7 @@
 
 class QueryResult
 {
-//friend std::ostream& printRes2(std::ostream& os,const QueryResult& result);
+friend std::ostream& print(std::ostream& os,const QueryResult& res);
 public:
 	using LineNo = std::vector<std::string>::size_type;
 	QueryResult(std::string word,
@@ -20,7 +20,7 @@ public:
 	{
 	}
 
-    std::ostream& print(std::ostream& os);
+    //std::ostream& print(std::ostream& os);
 
 private:
 	std::string word_;
@@ -28,5 +28,6 @@ private:
 	std::shared_ptr<std::set<LineNo>> lnos_;
 };
 
+std::ostream& print(std::ostream& os,const QueryResult& res);
 
 #endif

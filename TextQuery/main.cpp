@@ -26,7 +26,8 @@ int main(int argc,char** argv)
 		if(!(cin >> word) || word == string("q"))
 			return 0;
 		QueryResult res = obj.query(word);
-		res.print(cout);
+		//res.print(cout);
+		print(cout,res);
 	}while(1);
 	return 0;
 }
