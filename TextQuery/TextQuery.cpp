@@ -54,7 +54,7 @@ void TextQuery::query()
 	}
 
 	//print
-	cout << "element occurs " << count_ << " times" << endl;
+	cout << word_ << " occurs " << count_ << " times" << endl;
 	for(auto& content : mapLine_)
 	{
 		cout << "(line " << content.first << ") " << content.second << endl;
