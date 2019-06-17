@@ -1,63 +1,56 @@
 #include <iostream>
-#include <fstream>
-#include <string.h>
+#include <sstream>
 #include "TextQuery.h"
+#include "QueryResult.h"
 
 using namespace std;
 
-TextQuery::TextQuery(const char* path,const char* word)
-	:path_(path),
-	word_(word),
-	count_(0)
+TextQuery::TextQuery(ifstream& inf)
+	:file_(new vector<string>)
 {
+	string szText;
+	while(getline(inf,szText))
+	{
+		file_->push_back(szText);
+		LineNo lno = file_->size() - 1;
+		istringstream iss(szText);
+		string szWord;
+		while(iss >> szWord)
+		{
+			auto& lnos = wordMap_[szWord];
+			if(!lnos)
+				lnos.reset(new set<LineNo>);
+			lnos->insert(lno);
+		}
+	}
 }
 
 TextQuery::~TextQuery()
 {
 }
 
-void TextQuery::query()
+QueryResult TextQuery::query(string word)
 {
-	if(path_ == nullptr || word_ == nullptr)
-		cout << "please input the path and word!" << endl;
-
-	ifstream inf(path_);
-	if(!inf)
+	static shared_ptr<set<LineNo>> nodata(new set<LineNo>);
+	auto finded = wordMap_.find(word);
+	if(finded == wordMap_.end())
 	{
-		cout << "open fail:" + string(path_) << endl;
-		return ;
+		return QueryResult(word,file_,nodata);
 	}
+	else
+		return QueryResult(word,file_,finded->second);
+}
 
-	//query
-	string line;
-	int lineNO = 1;
-	while(getline(inf,line))
+void TextQuery::test()
+{
+	for(auto& tmp : wordMap_)
 	{
-		string::size_type pos = 0;
-		bool finded = false;
-		do
+		cout << tmp.first;
+		for(auto& lno : *tmp.second)
 		{
-			pos = line.find(word_,pos);
-			if(pos != string::npos)
-			{
-				if(!finded)
-				{
-					finded = true;
-					mapLine_[lineNO] = line;
-				}
-				++count_;
-				pos += strlen(word_);
-			}
-		}while(pos != string::npos && pos <= line.size());
-
-		++lineNO;
+			cout << " ";
+			cout << lno;
+		}
+		cout << endl;
 	}
-
-	//print
-	cout << word_ << " occurs " << count_ << " times" << endl;
-	for(auto& content : mapLine_)
-	{
-		cout << "(line " << content.first << ") " << content.second << endl;
-	}
-
 }

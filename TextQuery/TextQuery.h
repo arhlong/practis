@@ -1,24 +1,28 @@
-#ifndef _TEXT_QUERY_H
-#define _TEXT_QUERY_H
+#ifndef _TEXT_QUERY_H_
+#define _TEXT_QUERY_H_
 #include <map>
+#include <vector>
+#include <set>
 #include <string>
+#include <fstream>
+#include <memory>
 
+class QueryResult;
 class TextQuery
 {
 public:
-	TextQuery(const char* path,const char* word);
+	using LineNo = std::vector<std::string>::size_type;
+	TextQuery(std::ifstream& inf);
 	TextQuery(const TextQuery& other) = delete;
 	TextQuery& operator=(const TextQuery& other) = delete;
 	~TextQuery();
 
-	//query and print
-	void query();
+	void test();
+	QueryResult query(std::string word);
 
 private:
-	const char* path_;
-	const char* word_;
-	std::map<int,std::string> mapLine_;
-	int   count_;
+	std::shared_ptr<std::vector<std::string>>  file_;
+	std::map<std::string,std::shared_ptr<std::set<LineNo>>> wordMap_;
 };
 
 #endif
